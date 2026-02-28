@@ -1,34 +1,39 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SECRET_KEY = 'kodnest_super_secret_key_2026'; // Normally in .env
+const SECRET_KEY = 'kodnest_super_secret_key_2026';
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Serve static files from the kodnest-banking-app directory
-app.use(express.static(path.join(__dirname, 'kodnest-banking-app')));
+// Serve static files from the CURRENT directory
+// Since files are now at the root
+app.use(express.static(path.join(__dirname)));
 
 // Database setup
-const db = new sqlite3.Database('./banking_app.db', (err) => {
+// Using ':memory:' for Vercel ensuring registration works (resets on cold start but functions for live demo)
+const dbPath = process.env.VERCEL ? ':memory:' : './banking_app.db';
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Database connection error:', err.message);
     } else {
-        console.log('Connected to the SQLite database.');
-        db.run(`CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fullname TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )`);
+        console.log(`Connected to database: ${dbPath}`);
+        db.serialize(() => {
+            db.run(`CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fullname TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL
+            )`);
+        });
     }
 });
 
@@ -60,18 +65,18 @@ app.post('/api/register', async (req, res) => {
                 if (err.message.includes('UNIQUE constraint failed')) {
                     return res.status(400).json({ error: 'Email already exists.' });
                 }
-                return res.status(500).json({ error: 'Database error.' });
+                return res.status(500).json({ error: 'Database error: ' + err.message });
             }
 
             // Generate JWT Token
             const token = jwt.sign({ id: this.lastID, email, fullname }, SECRET_KEY, { expiresIn: '1h' });
 
-            // Set cookie in frontend
-            res.cookie('auth_token', token, { httpOnly: false, secure: false, maxAge: 3600000 }); // httpOnly=false to allow frontend to read if needed, though usually true is safer. But requirements said "cookies will generate in frontend" so we'll let frontend access it or store it.
+            // Set cookie
+            res.cookie('auth_token', token, { httpOnly: false, secure: true, sameSite: 'None', maxAge: 3600000 });
             res.json({ message: 'User registered successfully', token, fullname });
         });
     } catch (e) {
-        res.status(500).json({ error: 'Internal server error.' });
+        res.status(500).json({ error: 'Internal server error: ' + e.message });
     }
 });
 
@@ -94,12 +99,12 @@ app.post('/api/login', (req, res) => {
         const token = jwt.sign({ id: user.id, email: user.email, fullname: user.fullname }, SECRET_KEY, { expiresIn: '1h' });
 
         // Set cookie
-        res.cookie('auth_token', token, { httpOnly: false, secure: false, maxAge: 3600000 });
+        res.cookie('auth_token', token, { httpOnly: false, secure: true, sameSite: 'None', maxAge: 3600000 });
         res.json({ message: 'Login successful', token, fullname: user.fullname });
     });
 });
 
-// 3. Check Authentication Status (Used by Dashboard)
+// 3. Check Authentication Status
 app.get('/api/verify', authenticateToken, (req, res) => {
     res.json({ user: req.user, message: 'Valid token. Database validation successful.' });
 });
@@ -110,13 +115,17 @@ app.post('/api/logout', (req, res) => {
     res.json({ message: 'Logged out successfully' });
 });
 
-// Catch-all route to serve login page if hits root and not matched
+// Serve root routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'kodnest-banking-app', 'login.html'));
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = app;
