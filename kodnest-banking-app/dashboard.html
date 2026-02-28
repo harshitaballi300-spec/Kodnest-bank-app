@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | KodNest Banking App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar glass-panel">
+            <div class="sidebar-brand">
+                <div class="logo-icon small-logo">
+                    <img src="assets/logo.png" alt="KodNest Logo">
+                </div>
+                <h2>KodNest</h2>
+            </div>
+            <ul class="nav-links" id="sidebar-nav">
+                <li><a href="#" class="nav-item active" data-target="view-home"><i class="fa-solid fa-house"></i>
+                        Home</a></li>
+                <li><a href="#" class="nav-item" data-target="view-transfers"><i
+                            class="fa-solid fa-money-bill-transfer"></i> Transfers</a></li>
+                <li><a href="#" class="nav-item" data-target="view-statistics"><i class="fa-solid fa-chart-line"></i>
+                        Statistics</a></li>
+                <li><a href="#" class="nav-item" data-target="view-ai-agent"><i class="fa-solid fa-robot"></i> AI
+                        Agent</a></li>
+                <li><a href="#" class="nav-item" data-target="view-settings"><i class="fa-solid fa-gear"></i>
+                        Settings</a></li>
+            </ul>
+            <div class="logout-container">
+                <a href="#" id="logout-btn" class="logout-btn" onclick="logout()"><i
+                        class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="dashboard-header glass-panel">
+                <div class="greeting">
+                    <h1>Welcome back, <span class="highlight">Alex</span></h1>
+                    <p class="subtitle">Here is your financial overview for today.</p>
+                </div>
+                <div class="user-profile">
+                    <div class="profile-pic"><i class="fa-solid fa-user"></i></div>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div id="views-container">
+
+                <!-- Home View -->
+                <section id="view-home" class="dashboard-view active">
+                    <div class="dashboard-grid">
+                        <!-- Premium Card -->
+                        <div class="card-section">
+                            <div class="premium-card">
+                                <div class="card-header">
+                                    <span class="card-type">KodNest Premium</span>
+                                    <i class="fa-brands fa-cc-visa fa-2x"></i>
+                                </div>
+                                <div class="card-chip">
+                                    <i class="fa-solid fa-microchip fa-2x"></i>
+                                </div>
+                                <div class="card-balance">
+                                    <p>Total Balance</p>
+                                    <h2>₹1,84,562.00</h2>
+                                </div>
+                                <div class="card-details">
+                                    <div class="card-number">**** **** **** 4289</div>
+                                    <div class="card-expiry">
+                                        <span>Valid Thru</span>
+                                        <strong>12/28</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Transfer -->
+                        <div class="transfer-section glass-panel">
+                            <h3 class="section-title">Quick Transfer</h3>
+                            <form id="transfer-form">
+                                <div class="form-group">
+                                    <input type="text" id="recipient" class="input-field" placeholder=" " required>
+                                    <label for="recipient" class="floating-label">Recipient Account/Email</label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" id="amount" class="input-field" placeholder=" " required
+                                        min="1">
+                                    <label for="amount" class="floating-label">Amount (₹)</label>
+                                </div>
+                                <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> Send
+                                    Money</button>
+                            </form>
+                        </div>
+
+                        <!-- Recent Transactions -->
+                        <div class="transactions-section glass-panel">
+                            <div class="section-header">
+                                <h3 class="section-title">Recent Transactions</h3>
+                                <a href="#" class="view-all">View All</a>
+                            </div>
+                            <div class="transaction-list">
+                                <div class="transaction-item">
+                                    <div class="tx-icon receive"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="tx-details">
+                                        <h4>Salary Deposit</h4>
+                                        <p>Tech Corp Inc.</p>
+                                    </div>
+                                    <div class="tx-amount positive">+₹42,000.00</div>
+                                </div>
+                                <div class="transaction-item">
+                                    <div class="tx-icon send"><i class="fa-solid fa-arrow-up"></i></div>
+                                    <div class="tx-details">
+                                        <h4>Apple Store</h4>
+                                        <p>Electronics</p>
+                                    </div>
+                                    <div class="tx-amount negative">-₹9,999.00</div>
+                                </div>
+                                <div class="transaction-item">
+                                    <div class="tx-icon send"><i class="fa-solid fa-arrow-up"></i></div>
+                                    <div class="tx-details">
+                                        <h4>Whole Foods</h4>
+                                        <p>Groceries</p>
+                                    </div>
+                                    <div class="tx-amount negative">-₹1,455.50</div>
+                                </div>
+                                <div class="transaction-item">
+                                    <div class="tx-icon receive"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="tx-details">
+                                        <h4>Transfer from John</h4>
+                                        <p>Dinner split</p>
+                                    </div>
+                                    <div class="tx-amount positive">+₹4,500.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Transfers View -->
+                <section id="view-transfers" class="dashboard-view">
+                    <div class="glass-panel" style="padding: 30px; border-radius: 20px;">
+                        <h2 class="section-title" style="margin-bottom: 30px;">Transfer History</h2>
+                        <div class="transaction-list">
+                            <div class="transaction-item">
+                                <div class="tx-icon receive"><i class="fa-solid fa-arrow-down"></i></div>
+                                <div class="tx-details">
+                                    <h4>Transfer from John</h4>
+                                    <p>Dinner split</p>
+                                </div>
+                                <div class="tx-amount positive">+₹4,500.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Statistics View -->
+                <section id="view-statistics" class="dashboard-view">
+                    <div class="glass-panel" style="padding: 50px 30px; border-radius: 20px; text-align: center;">
+                        <i class="fa-solid fa-chart-pie fa-4x" style="color: #d4af37; margin-bottom: 20px;"></i>
+                        <h2 class="section-title">Account Insights</h2>
+                        <p style="color: var(--text-muted);">Visual statistics and charts will be available in the next
+                            update.</p>
+                    </div>
+                </section>
+
+                <!-- AI Agent View -->
+                <section id="view-ai-agent" class="dashboard-view">
+                    <div class="glass-panel"
+                        style="padding: 20px; border-radius: 20px; height: 600px; display: flex; flex-direction: column;">
+                        <h2 class="section-title">KodNest Support Agent</h2>
+                        <iframe src="https://coherelabs-tiny-aya.hf.space" frameborder="0"
+                            style="flex: 1; width: 100%; border-radius: 12px; border: 2px solid rgba(212, 175, 55, 0.3);"></iframe>
+                    </div>
+                </section>
+
+                <!-- Settings View -->
+                <section id="view-settings" class="dashboard-view">
+                    <div class="glass-panel" style="padding: 30px; border-radius: 20px;">
+                        <h2 class="section-title" style="margin-bottom: 30px;">Account Settings</h2>
+                        <form id="settings-form" onsubmit="event.preventDefault(); alert('Settings Saved!');">
+                            <div class="form-group">
+                                <input type="text" id="setting-name" class="input-field" placeholder=" " value="Alex"
+                                    required>
+                                <label for="setting-name" class="floating-label">Full Name</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="setting-email" class="input-field" placeholder=" "
+                                    value="alex@example.com" required>
+                                <label for="setting-email" class="floating-label">Email Address</label>
+                            </div>
+                            <button type="submit" class="btn-primary" style="margin-bottom: 0;">Save Changes</button>
+                        </form>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

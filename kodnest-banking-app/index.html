@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | KodNest Banking App</title>
+    <meta name="description" content="Register for KodNest Banking App to enjoy secure and modern banking services.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <div class="brand">
+                <div class="logo-icon">
+                    <img src="assets/logo.png" alt="KodNest Logo">
+                </div>
+                <h1>KodNest Banking App</h1>
+            </div>
+
+            <div class="form-header">
+                <h2 class="title">Create Account</h2>
+                <p class="subtitle">Register for full access</p>
+            </div>
+
+            <form id="register-form" novalidate>
+                <div class="form-group">
+                    <input type="text" id="fullname" class="input-field" placeholder=" " required>
+                    <label for="fullname" class="floating-label">Full Name</label>
+                    <span class="error-msg">Please enter your full name</span>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" id="email" class="input-field" placeholder=" " required>
+                    <label for="email" class="floating-label">Email Address</label>
+                    <span class="error-msg">Please enter a valid email</span>
+                </div>
+
+                <div class="form-group password-group">
+                    <input type="password" id="password" class="input-field" placeholder=" " required>
+                    <label for="password" class="floating-label">Password</label>
+                    <i class="fa-solid fa-eye-slash toggle-password" data-target="password"></i>
+                    <span class="error-msg">Password must be at least 8 characters</span>
+                </div>
+
+                <div class="form-group password-group">
+                    <input type="password" id="confirm-password" class="input-field" placeholder=" " required>
+                    <label for="confirm-password" class="floating-label">Confirm Password</label>
+                    <i class="fa-solid fa-eye-slash toggle-password" data-target="confirm-password"></i>
+                    <span class="error-msg">Passwords do not match</span>
+                </div>
+
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+
+            <div class="switch-page">
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
