@@ -72,6 +72,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     password: password.value
                 };
 
+                // Check if running locally via file://
+                if (window.location.protocol === 'file:') {
+                    console.log('Running in local mode (mock API)');
+                    setTimeout(() => {
+                        const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+                        if (users.find(u => u.email === userData.email)) {
+                            alert('Email already registered.');
+                        } else {
+                            users.push(userData);
+                            localStorage.setItem('mock_users', JSON.stringify(users));
+                            alert('Account Created Successfully! Please login to continue.');
+                            window.location.href = 'login.html';
+                        }
+                    }, 500);
+                    return;
+                }
+
                 fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -82,11 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (data.error) {
                             alert(data.error);
                         } else {
-                            // Assuming the backend has set a cookie and validated
-                            alert('Account Created Successfully! Welcome to KodNest Banking.');
-                            // Store full name in session storage
-                            sessionStorage.setItem('userName', data.fullname);
-                            window.location.href = 'dashboard.html';
+                            alert('Account Created Successfully! Please login to continue.');
+                            window.location.href = 'login.html';
                         }
                     })
                     .catch(err => alert('An error occurred during registration.'));
@@ -122,6 +136,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     password: password.value
                 };
 
+                // Check if running locally via file://
+                if (window.location.protocol === 'file:') {
+                    console.log('Running in local mode (mock API)');
+                    setTimeout(() => {
+                        const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+                        const user = users.find(u => u.email === loginData.email && u.password === loginData.password);
+                        if (user) {
+                            alert('Login Successful (Local Mode)!');
+                            localStorage.setItem('mock_session', JSON.stringify({ fullname: user.fullname }));
+                            sessionStorage.setItem('userName', user.fullname);
+                            window.location.href = 'dashboard.html';
+                        } else {
+                            alert('Invalid email or password.');
+                        }
+                    }, 500);
+                    return;
+                }
+
                 fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -146,16 +178,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Checking auth logic on dashboard load
     if (window.location.pathname.includes('dashboard.html')) {
-        fetch('/api/verify')
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    alert('Unauthorized. Please login first.');
-                    window.location.href = 'login.html';
-                } else {
-                    console.log(data.message); // Valid Token
-                }
-            });
+        if (window.location.protocol === 'file:') {
+            const session = localStorage.getItem('mock_session');
+            if (!session) {
+                alert('Unauthorized. Please login first (Local Mode).');
+                window.location.href = 'login.html';
+            }
+        } else {
+            fetch('/api/verify')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Unauthorized. Please login first.');
+                        window.location.href = 'login.html';
+                    } else {
+                        console.log(data.message); // Valid Token
+                    }
+                });
+        }
 
         const storedName = sessionStorage.getItem('userName');
         if (storedName) {
@@ -235,9 +275,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.logout = function () {
-    fetch('/api/logout', { method: 'POST' })
-        .then(() => {
-            sessionStorage.removeItem('userName');
-            window.location.href = 'login.html';
-        });
+    if (window.location.protocol === 'file:') {
+        localStorage.removeItem('mock_session');
+        sessionStorage.removeItem('userName');
+        window.location.href = 'login.html';
+    } else {
+        fetch('/api/logout', { method: 'POST' })
+            .then(() => {
+                sessionStorage.removeItem('userName');
+                window.location.href = 'login.html';
+            });
+    }
 };
